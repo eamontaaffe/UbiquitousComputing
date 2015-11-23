@@ -1,5 +1,19 @@
-Advanced Android Sample App
-===================================
+Project 6: Ubiquitous Computing
+===============================
+
+A project for Udacity's [Android Developers Nanodegree](https://www.udacity.com/course/android-developer-nanodegree--nd801).
+
+This project specifically tests the knowleged learnt in the course [Android Ubiquitous Computing](https://www.udacity.com/course/android-ubiquitous-computing--ud875).
+
+## Project Description
+
+In this project, you will build a wearable watch face for Sunshine to run on an Android Wear device.
+
+The project will be marked according to this [rubric](https://docs.google.com/document/d/1sAn5CPfInyjBtQ08-mh4JpbpmiRn-9upGw_vXtS4R50/pub?embedded=true).
+
+
+Sunshine App
+----------------------------
 
 Synchronizes weather information from OpenWeatherMap on Android Phones and Tablets. Used in the Udacity Advanced Android course.
 
