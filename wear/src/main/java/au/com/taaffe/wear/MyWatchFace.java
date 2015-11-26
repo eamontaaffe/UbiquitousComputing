@@ -21,12 +21,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -37,9 +37,14 @@ import android.view.SurfaceHolder;
 import android.view.WindowInsets;
 
 import java.lang.ref.WeakReference;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+
+//import com.example.android.sunshine.app;
 
 /**
  * Digital watch face with seconds. In ambient mode, the seconds aren't displayed. On devices with
@@ -92,7 +97,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
         boolean mAmbient;
 
         Time mTime;
-        Date mDate;
+        Calendar mCalendar;
 
         float mXCenter;
         float mYOffset;
@@ -149,7 +154,6 @@ public class MyWatchFace extends CanvasWatchFaceService {
 
 
             mTime = new Time();
-            mDate = new Date();
         }
 
         @Override
@@ -176,7 +180,9 @@ public class MyWatchFace extends CanvasWatchFaceService {
                 // Update time zone in case it changed while we weren't visible.
                 mTime.clear(TimeZone.getDefault().getID());
                 mTime.setToNow();
-                mDate.get
+
+                mCalendar = Calendar.getInstance();
+
             } else {
                 unregisterReceiver();
             }
@@ -268,16 +274,41 @@ public class MyWatchFace extends CanvasWatchFaceService {
 
             // Draw H:MM in ambient mode or H:MM:SS in interactive mode.
             mTime.setToNow();
+
             String textHour = String.format("%d", mTime.hour);
             String textMin = String.format("%02d", mTime.minute);
             String textColon = ":";
-            String textDate = "FRI, JUL 14 2015";
+            String textDate = formatDate(mCalendar); //"FRI, JUL 14 2015";
             String textHigh = "25\u00B0";
             String textLow = "16\u00B0";
 
             mXCenter = canvas.getWidth()/2;
 
             //((textPaint.descent() + textPaint.ascent()) / 2) is the distance from the baseline to the center.
+
+            // Get today's data from the ContentProvider
+//            String location = Utility.getPreferredLocation(this);
+//            Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
+//                    location, System.currentTimeMillis());
+//            Cursor data = getContentResolver().query(weatherForLocationUri, FORECAST_COLUMNS, null,
+//                    null, WeatherContract.WeatherEntry.COLUMN_DATE + " ASC");
+//            if (data == null) {
+//                return;
+//            }
+//            if (!data.moveToFirst()) {
+//                data.close();
+//                return;
+//            }
+//
+//            // Extract the weather data from the Cursor
+//            int weatherId = data.getInt(INDEX_WEATHER_ID);
+//            int weatherArtResourceId = Utility.getArtResourceForWeatherCondition(weatherId);
+//            String description = data.getString(INDEX_SHORT_DESC);
+//            double maxTemp = data.getDouble(INDEX_MAX_TEMP);
+//            double minTemp = data.getDouble(INDEX_MIN_TEMP);
+//            String formattedMaxTemperature = Utility.formatTemperature(this, maxTemp);
+//            String formattedMinTemperature = Utility.formatTemperature(this, minTemp);
+//            data.close();
 
             float gap = getResources().getDimension(R.dimen.digital_character_gap);
             float lowTempOffset = getResources().getDimension(R.dimen.digital_low_temp_offset);
@@ -297,6 +328,13 @@ public class MyWatchFace extends CanvasWatchFaceService {
             canvas.drawText(textHigh, mXCenter - highTempOffset, mYOffsetTemp, mTextPaintHigh);
             canvas.drawText(textLow, mXCenter + lowTempOffset, mYOffsetTemp, mTextPaintLow);
             canvas.drawLine(lineStartX, lineStartY, lineStopX, lineStopY, mLinePaint);
+        }
+
+        private String formatDate(Calendar c) {
+            String format =  "yyyy-MM-dd";
+            SimpleDateFormat sdf = new SimpleDateFormat(format);
+
+            return sdf.format(c.get(Calendar.DATE));
         }
 
         /**
